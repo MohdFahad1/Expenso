@@ -82,7 +82,42 @@ const deletedExpense = async (req, res) => {
   }
 };
 
+const getBudgetExpenses = async (req, res) => {
+  const { budgetId } = req.query;
+
+  try {
+    if (!budgetId) {
+      return res.status(400).json({
+        success: false,
+        message: "Budget Id must be provided",
+      });
+    }
+
+    const expenses = await Expense.find({ budgetId });
+
+    if (!expenses || expenses.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No expenses found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      expenses,
+    });
+  } catch (error) {
+    console.error("Error Fetching Expenses: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createExpense,
   deletedExpense,
+  getBudgetExpenses,
 };
