@@ -4,6 +4,7 @@ const connectDB = require("./config/db.js");
 
 const authRoutes = require("./routes/user.routes.js");
 const budgetRoutes = require("./routes/budget.routes.js");
+const expenseRoutes = require("./routes/expense.routes.js");
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", authRoutes);
 app.use("/api/budget", budgetRoutes);
+app.use("/api/expense", expenseRoutes);
 
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
