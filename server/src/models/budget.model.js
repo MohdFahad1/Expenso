@@ -6,6 +6,8 @@ const BudgetSchema = new Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
+      lowercase: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
