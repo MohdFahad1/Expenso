@@ -50,6 +50,42 @@ const createBudget = async (req, res) => {
   }
 };
 
+const singleBudget = async (req, res) => {
+  try {
+    const { budgetId } = req.query;
+
+    if (!budgetId) {
+      return res.status(400).json({
+        success: false,
+        message: "Budget ID must be provided",
+      });
+    }
+
+    const budgetData = await Budget.findById(budgetId);
+
+    if (!budgetData) {
+      return res.status(404).json({
+        success: false,
+        message: "No Budget found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      budgetData,
+    });
+  } catch (error) {
+    console.error("Error Fetching Budgets: ", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBudget,
+  singleBudget,
 };
