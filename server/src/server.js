@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db.js");
 
+const authRoutes = require("./routes/user.routes.js");
+
 dotenv.config();
 
 const app = express();
@@ -13,6 +15,8 @@ connectDB(process.env.MONGO_URI);
 app.get("/", (req, res) => {
   res.send("Expense Tracker API is running...");
 });
+
+app.use("/api/users", authRoutes);
 
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {
