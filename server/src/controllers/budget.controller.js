@@ -85,7 +85,43 @@ const singleBudget = async (req, res) => {
   }
 };
 
+const allBudgets = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID must be provided",
+      });
+    }
+
+    const budgets = await Budget.find({ userId });
+
+    if (!budgets || budgets.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No budgets found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      budgets,
+    });
+  } catch (error) {
+    console.error("Error Fetching Budgets: ", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBudget,
   singleBudget,
+  allBudgets,
 };
