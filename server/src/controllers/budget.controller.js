@@ -211,6 +211,7 @@ const deleteBudget = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   createBudget,
   singleBudget,
