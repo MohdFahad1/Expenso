@@ -120,8 +120,63 @@ const allBudgets = async (req, res) => {
   }
 };
 
+const updateBudget = async (req, res) => {
+  try {
+    const { name, amount, emoji, budgetId, userId } = req.body;
+
+    if (!budgetId) {
+      return res.status(400).json({
+        success: false,
+        message: "Budget ID must be provided",
+      });
+    }
+
+    const updateFields = {};
+    if (name !== undefined) updateFields.name = name.trim();
+    if (emoji !== undefined) updateFields.emoji = emoji;
+    if (amount !== undefined) updateFields.amount = amount;
+    if (userId !== undefined) updateFields.userId = userId;
+
+    const budget = await Budget.findById(budgetId);
+    if (!budget) {
+      return res.status(404).json({
+        success: false,
+        message: "Budget not found",
+      });
+    }
+
+    if (userId && budget.userId.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this budget",
+      });
+    }
+
+    const updatedBudget = await Budget.findByIdAndUpdate(
+      budgetId,
+      updateFields,
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Budget Updated",
+      updatedBudget,
+    });
+  } catch (error) {
+    console.error("Error Updating Budget: ", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBudget,
   singleBudget,
   allBudgets,
+  updateBudget,
 };
