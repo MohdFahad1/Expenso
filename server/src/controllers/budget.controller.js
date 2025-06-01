@@ -174,9 +174,47 @@ const updateBudget = async (req, res) => {
   }
 };
 
+const deleteBudget = async (req, res) => {
+  const { budgetId } = req.query;
+  try {
+    if (!budgetId) {
+      console.error("Missing budgetId:", budgetId);
+      return res.status(400).json({
+        success: false,
+        message: "BudgetId is required",
+      });
+    }
+
+    const deletedBudget = await Budget.findByIdAndDelete(budgetId);
+
+    if (!deletedBudget) {
+      console.error("No budget found with ID:", budgetId);
+      return res.status(404).json({
+        success: false,
+        message: "Budget not found",
+      });
+    }
+
+    console.log("Budget deleted successfully:", deletedBudget);
+
+    return res.status(200).json({
+      success: true,
+      message: "Budget Deleted",
+    });
+  } catch (error) {
+    console.error("Error Deleting Budget:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   createBudget,
   singleBudget,
   allBudgets,
   updateBudget,
+  deleteBudget,
 };
