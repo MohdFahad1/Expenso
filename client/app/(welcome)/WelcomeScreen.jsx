@@ -19,7 +19,7 @@ const WelcomeScreen = () => {
 
       <Pressable
         style={styles.signIn}
-        onPress={() => router.push("(auth)/Login")}
+        onPress={() => router.navigate("(auth)/Login")}
       >
         <Text style={styles.signInText}>Sign In</Text>
       </Pressable>
@@ -32,7 +32,10 @@ const WelcomeScreen = () => {
           Finances must be arranged to set a better lifestyle in the future.
         </Text>
         <View style={styles.btnContainer}>
-          <Pressable style={styles.btn}>
+          <Pressable
+            style={styles.btn}
+            onPress={() => router.navigate("(auth)/Register")}
+          >
             <Text style={styles.btnText}>Get Started</Text>
           </Pressable>
         </View>

@@ -5,8 +5,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Zocial from "@expo/vector-icons/Zocial";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
 import { useRouter } from "expo-router";
 import BackButton from "../components/BackButton";
 
@@ -17,12 +19,25 @@ const Login = () => {
     <ScreenWrapper bg="#121212">
       <View style={styles.container}>
         <BackButton />
-        <Text style={styles.mainText}>Hey,</Text>
-        <Text style={styles.mainText}>Welcome Back</Text>
+        <Text style={styles.mainText}>Let's,</Text>
+        <Text style={styles.mainText}>Get Started</Text>
 
-        <Text style={styles.subText}>Login now to track all your expenses</Text>
+        <Text style={styles.subText}>
+          Create an account to track your expenses
+        </Text>
 
         <View style={styles.inputContainer}>
+          <View>
+            <FontAwesome name="user" size={24} color="#e1e1e1" />
+          </View>
+          <TextInput
+            placeholder="Enter your name"
+            placeholderTextColor={"#e1e1e1"}
+            style={styles.input}
+          />
+        </View>
+
+        <View style={[styles.inputContainer, { marginVertical: 20 }]}>
           <View>
             <Zocial name="email" size={22} color="#e1e1e1" />
           </View>
@@ -33,7 +48,7 @@ const Login = () => {
           />
         </View>
 
-        <View style={[styles.inputContainer, { marginTop: 20 }]}>
+        <View style={styles.inputContainer}>
           <View>
             <FontAwesome6 name="lock" size={22} color="#e1e1e1" />
           </View>
@@ -47,14 +62,14 @@ const Login = () => {
 
         <View style={styles.btnContainer}>
           <Pressable style={styles.btn}>
-            <Text style={styles.btnText}>Login</Text>
+            <Text style={styles.btnText}>Register</Text>
           </Pressable>
         </View>
 
         <View style={styles.signUp}>
-          <Text style={styles.signUpText}>Don't have an account?</Text>
-          <Pressable onPress={() => router.navigate("(auth)/Register")}>
-            <Text style={styles.signUpBtn}>Register</Text>
+          <Text style={styles.signUpText}>Already have an account?</Text>
+          <Pressable onPress={() => router.navigate("(auth)/Login")}>
+            <Text style={styles.signUpBtn}>Login</Text>
           </Pressable>
         </View>
       </View>
