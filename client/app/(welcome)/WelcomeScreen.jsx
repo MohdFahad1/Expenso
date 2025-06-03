@@ -3,8 +3,11 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useRouter } from "expo-router";
 
 const WelcomeScreen = () => {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       <View style={styles.imgContainer}>
@@ -14,7 +17,10 @@ const WelcomeScreen = () => {
         />
       </View>
 
-      <Pressable style={styles.signIn}>
+      <Pressable
+        style={styles.signIn}
+        onPress={() => router.push("(auth)/Login")}
+      >
         <Text style={styles.signInText}>Sign In</Text>
       </Pressable>
 
