@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import ScreenWrapper from "../components/ScreenWrapper";
 import {
   widthPercentageToDP as wp,
@@ -11,9 +18,42 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { useRouter } from "expo-router";
 import BackButton from "../components/BackButton";
+import { useState } from "react";
+import axios from "axios";
 
-const Login = () => {
+const Register = () => {
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
+    if (!name || !email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        "http://192.168.1.19:5001/api/users/register",
+        {
+          name,
+          email,
+          password,
+        }
+      );
+
+      Alert.alert("Success", "Registered Successfully", [
+        {
+          text: "OK",
+          onPress: () => router.navigate("(auth)/Login"),
+        },
+      ]);
+    } catch (error) {
+      console.log("Register Error: ", error.message);
+      Alert.alert("Error", "Failed to register. Please try again.");
+    }
+  };
 
   return (
     <ScreenWrapper bg="#121212">
@@ -34,6 +74,8 @@ const Login = () => {
             placeholder="Enter your name"
             placeholderTextColor={"#e1e1e1"}
             style={styles.input}
+            value={name}
+            onChangeText={setName}
           />
         </View>
 
@@ -45,6 +87,8 @@ const Login = () => {
             placeholder="Enter your email"
             placeholderTextColor={"#e1e1e1"}
             style={styles.input}
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -57,11 +101,13 @@ const Login = () => {
             placeholderTextColor={"#e1e1e1"}
             style={styles.input}
             secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
 
         <View style={styles.btnContainer}>
-          <Pressable style={styles.btn}>
+          <Pressable style={styles.btn} onPress={handleRegister}>
             <Text style={styles.btnText}>Register</Text>
           </Pressable>
         </View>
@@ -77,7 +123,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {
