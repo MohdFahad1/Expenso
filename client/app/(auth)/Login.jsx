@@ -16,10 +16,12 @@ import Zocial from "@expo/vector-icons/Zocial";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
 import BackButton from "../components/BackButton";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
+  const { login } = useContext(AuthContext);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +37,10 @@ const Login = () => {
         email,
         password,
       });
+
+      const { token, user } = res.data;
+
+      login(user, token);
 
       Alert.alert("Success", "Logged in Successfully", [
         {
