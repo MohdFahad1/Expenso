@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import ScreenWrapper from "../components/ScreenWrapper";
 import {
   widthPercentageToDP as wp,
@@ -9,9 +16,38 @@ import Zocial from "@expo/vector-icons/Zocial";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
 import BackButton from "../components/BackButton";
+import { useState } from "react";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://192.168.1.19:5001/api/users/login", {
+        email,
+        password,
+      });
+
+      Alert.alert("Success", "Logged in Successfully", [
+        {
+          text: "OK",
+          onPress: () => router.navigate("(tabs)/index"),
+        },
+      ]);
+    } catch (error) {
+      const errorMsg = error.message || "Failed to login, Please try again.";
+      console.log("Login Error: ", errorMsg);
+      Alert.alert("Error", errorMsg);
+    }
+  };
 
   return (
     <ScreenWrapper bg="#121212">
@@ -30,6 +66,8 @@ const Login = () => {
             placeholder="Enter your email"
             placeholderTextColor={"#e1e1e1"}
             style={styles.input}
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -42,11 +80,13 @@ const Login = () => {
             placeholderTextColor={"#e1e1e1"}
             style={styles.input}
             secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
           />
         </View>
 
         <View style={styles.btnContainer}>
-          <Pressable style={styles.btn}>
+          <Pressable style={styles.btn} onPress={handleLogin}>
             <Text style={styles.btnText}>Login</Text>
           </Pressable>
         </View>

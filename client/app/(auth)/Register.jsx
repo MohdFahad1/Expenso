@@ -50,8 +50,9 @@ const Register = () => {
         },
       ]);
     } catch (error) {
-      console.log("Register Error: ", error.message);
-      Alert.alert("Error", "Failed to register. Please try again.");
+      const errorMsg = error.message || "Failed to register, Please try again.";
+      console.log("Login Error: ", errorMsg);
+      Alert.alert("Error", errorMsg);
     }
   };
 
