@@ -4,9 +4,18 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useRouter } from "expo-router";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 const WelcomeScreen = () => {
   const router = useRouter();
+  const { token } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (token) {
+      router.replace("(tabs)");
+    }
+  }, [token]);
 
   return (
     <View style={styles.container}>

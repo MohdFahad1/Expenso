@@ -4,6 +4,10 @@ import {
   Text,
   View,
   ActivityIndicator,
+  Pressable,
+  Modal,
+  TextInput,
+  ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import ScreenWrapper from "../components/ScreenWrapper";
@@ -13,27 +17,32 @@ import {
 } from "react-native-responsive-screen";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
+import Feather from "@expo/vector-icons/Feather";
 
 const Budget = () => {
   const { user } = useContext(AuthContext);
   const [budgets, setBudgets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [budgetName, setBudgetName] = useState("");
+  const [budgetAmount, setBudgetAmount] = useState(0);
+  const [selectedEmoji, setSelectedEmoji] = useState("💰");
+
+  const fetchBudgets = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `http://192.168.1.19:5001/api/budget/all?userId=${user?.id}`
+      );
+      setBudgets(res?.data?.budgets || []);
+    } catch (error) {
+      console.log("Error fetching budgets: ", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBudgets = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(
-          `http://192.168.1.19:5001/api/budget/all?userId=${user?.id}`
-        );
-        setBudgets(res?.data?.budgets || []);
-      } catch (error) {
-        console.log("Error fetching budgets: ", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (user?.id) {
       fetchBudgets();
     }
@@ -72,8 +81,21 @@ const Budget = () => {
   return (
     <ScreenWrapper bg="#171717">
       <View style={styles.container}>
-        <Text style={styles.mainText}>My Budgets</Text>
-
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={styles.mainText}>My Budgets</Text>
+          <Pressable
+            style={styles.addBtnBox}
+            onPress={() => setModalVisible(true)}
+          >
+            <Feather name="plus" size={24} color="#e1e1e1" />
+          </Pressable>
+        </View>
         {loading ? (
           <ActivityIndicator size="large" color="#A3E535" />
         ) : (
@@ -90,6 +112,78 @@ const Budget = () => {
           />
         )}
       </View>
+
+      {/* MODAL FORM */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.modalTitle}>Add New Budget</Text>
+
+              <View style={styles.emojiSelectBox}>
+                <TextInput
+                  style={styles.emoji}
+                  value={selectedEmoji}
+                  onChangeText={(text) => {
+                    const match = text.match(/\p{Emoji}/u);
+                    if (match) {
+                      setSelectedEmoji(match[0]);
+                    } else {
+                      setSelectedEmoji("");
+                    }
+                  }}
+                  keyboardType="default"
+                  maxLength={2}
+                />
+              </View>
+
+              <View>
+                <Text style={styles.inputBudgetName}>Budget Name</Text>
+                <TextInput
+                  placeholder="e.g. Home Decor"
+                  placeholderTextColor={"#666666"}
+                  style={styles.input}
+                  value={budgetName}
+                  onChangeText={setBudgetName}
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputBudgetName}>Budget Amount</Text>
+                <TextInput
+                  placeholder="e.g. $5000"
+                  placeholderTextColor={"#666666"}
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={budgetAmount}
+                  onChangeText={setBudgetAmount}
+                />
+              </View>
+
+              <View style={styles.btn}>
+                <Pressable
+                  style={styles.modalCloseBtn}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.modalCloseBtnText}>Cancel</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.modalAddBtn}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.modalAddBtnText}>Add</Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </ScreenWrapper>
   );
 };
@@ -108,9 +202,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: hp(2),
   },
+  addBtnBox: {
+    backgroundColor: "#3a3a3a",
+    width: wp(13),
+    height: hp(4),
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  },
   list: {
     paddingBottom: hp(2),
     gap: 12,
+    marginTop: 10,
   },
   emptyContainer: {
     flexGrow: 1,
@@ -145,7 +248,7 @@ const styles = StyleSheet.create({
   },
   emojiBox: {
     backgroundColor: "#3a3a3a",
-    borderRadius: "50%",
+    borderRadius: 100,
     height: hp(6.5),
     width: wp(14),
     justifyContent: "center",
@@ -166,5 +269,96 @@ const styles = StyleSheet.create({
     height: hp(1),
     backgroundColor: "#A3E535",
     borderRadius: 50,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContainer: {
+    backgroundColor: "#262626",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: hp(85),
+  },
+  modalTitle: {
+    fontSize: hp(2.5),
+    color: "#e1e1e1",
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  modalCloseBtn: {
+    marginTop: 20,
+    backgroundColor: "#3a3a3a",
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  emojiSelectBox: {
+    backgroundColor: "#3a3a3a",
+    borderRadius: 10,
+    height: hp(7),
+    width: wp(14.5),
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  emoji: {
+    fontSize: hp(3.5),
+  },
+  inputBudgetName: {
+    fontSize: hp(2.6),
+    fontWeight: "500",
+    marginBottom: 10,
+    color: "#e3e3e3",
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#666666",
+    color: "#e1e1e1",
+    borderRadius: 7,
+    paddingHorizontal: 10,
+  },
+
+  inputContainer: {
+    marginTop: 18,
+  },
+  btn: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    width: wp(88),
+    marginTop: 20,
+  },
+
+  modalCloseBtn: {
+    backgroundColor: "#3a3a3a",
+    paddingVertical: hp(2),
+    borderRadius: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+
+  modalCloseBtnText: {
+    color: "#e1e1e1",
+    fontSize: hp(2.2),
+    fontWeight: "500",
+  },
+
+  modalAddBtn: {
+    fontSize: hp(2.2),
+    backgroundColor: "#A3E535",
+    paddingVertical: hp(2),
+    borderRadius: 10,
+    marginLeft: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+  modalAddBtnText: {
+    color: "#313131",
+    borderRadius: 10,
+    fontSize: hp(2.2),
+    fontWeight: "500",
   },
 });
