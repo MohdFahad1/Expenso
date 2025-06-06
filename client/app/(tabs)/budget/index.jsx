@@ -11,14 +11,15 @@ import {
   Alert,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
-import ScreenWrapper from "../components/ScreenWrapper";
+import ScreenWrapper from "../../components/ScreenWrapper";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import axios from "axios";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import Feather from "@expo/vector-icons/Feather";
+import { useRouter } from "expo-router";
 
 const Budget = () => {
   const { user } = useContext(AuthContext);
@@ -28,6 +29,8 @@ const Budget = () => {
   const [budgetName, setBudgetName] = useState("");
   const [budgetAmount, setBudgetAmount] = useState(0);
   const [selectedEmoji, setSelectedEmoji] = useState("💰");
+
+  const router = useRouter();
 
   const fetchBudgets = async () => {
     setLoading(true);
@@ -81,7 +84,10 @@ const Budget = () => {
   }, [user]);
 
   const renderItem = ({ item }) => (
-    <View style={styles.budgetCard}>
+    <Pressable
+      style={styles.budgetCard}
+      onPress={() => router.push(`/budget/${item._id}`)}
+    >
       <View style={styles.budgetDetails}>
         <View style={{ flexDirection: "row", gap: 10 }}>
           <View style={styles.emojiBox}>
@@ -107,7 +113,7 @@ const Budget = () => {
       <View style={styles.line}>
         <View style={styles.innerLine}></View>
       </View>
-    </View>
+    </Pressable>
   );
 
   return (
