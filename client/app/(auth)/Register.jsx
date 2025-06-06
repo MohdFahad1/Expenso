@@ -57,7 +57,7 @@ const Register = () => {
   };
 
   return (
-    <ScreenWrapper bg="#121212">
+    <ScreenWrapper bg="#171717">
       <View style={styles.container}>
         <BackButton />
         <Text style={styles.mainText}>Let's,</Text>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     textAlign: "center",
-    color: "#121212",
+    color: "#171717",
     fontSize: hp(2.8),
     fontWeight: "600",
   },

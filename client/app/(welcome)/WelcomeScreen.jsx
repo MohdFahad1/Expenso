@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     width: "100%",
-    backgroundColor: "#121212",
+    backgroundColor: "#171717",
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     textAlign: "center",
-    color: "#121212",
+    color: "#171717",
     fontSize: hp(2.8),
     fontWeight: "600",
   },

@@ -12,7 +12,7 @@ const RootLayout = () => {
         <Stack.Screen name="(welcome)/WelcomeScreen" />
         <Stack.Screen name="(auth)/Login" />
         <Stack.Screen name="(auth)/Register" />
-        <Stack.Screen name="(tabs)/index" />
+        <Stack.Screen name="(tabs)" />
       </Stack>
     </AuthProvider>
   );

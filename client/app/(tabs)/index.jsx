@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useContext, useEffect } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useRouter } from "expo-router";
+import ScreenWrapper from "../components/ScreenWrapper";
 
 const Home = () => {
-  const { token } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,9 +19,34 @@ const Home = () => {
   }
 
   return (
-    <View>
-      <Text>Home</Text>
-    </View>
+    <ScreenWrapper bg="#171717">
+      <View style={styles.container}>
+        <View>
+          <Text>Hello,</Text>
+          <Text>{user?.name}</Text>
+        </View>
+        <View>
+          <Image
+            source={require("../../assets/images/card.png")}
+            resizeMode="contain"
+          />
+          <View>
+            <Text>Total Balance</Text>
+            <Text>$ 127.00</Text>
+          </View>
+
+          <View>
+            <Text>Income</Text>
+            <Text>$ 127.00</Text>
+          </View>
+
+          <View>
+            <Text>Expense</Text>
+            <Text>$ 427.00</Text>
+          </View>
+        </View>
+      </View>
+    </ScreenWrapper>
   );
 };
 
