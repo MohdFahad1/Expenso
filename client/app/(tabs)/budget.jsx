@@ -8,6 +8,7 @@ import {
   Modal,
   TextInput,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import ScreenWrapper from "../components/ScreenWrapper";
@@ -39,6 +40,37 @@ const Budget = () => {
       console.log("Error fetching budgets: ", error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const addBudget = async () => {
+    try {
+      const res = await axios.post(
+        `http://192.168.1.19:5001/api/budget/create`,
+        {
+          emoji: selectedEmoji,
+          name: budgetName,
+          amount: budgetAmount,
+          userId: user?.id,
+        }
+      );
+
+      setBudgets((prevBudgets) => [...prevBudgets, res.data.newBudget]);
+
+      fetchBudgets();
+
+      setModalVisible(false);
+      setBudgetName("");
+      setBudgetAmount(0);
+      setSelectedEmoji("💰");
+
+      Alert.alert("Success", "Budget added successfully");
+    } catch (error) {
+      console.log("Error fetching budgets: ", error);
+      Alert.alert(
+        "Error",
+        "There was an error adding your budget. Try again later."
+      );
     }
   };
 
@@ -173,10 +205,7 @@ const Budget = () => {
                   <Text style={styles.modalCloseBtnText}>Cancel</Text>
                 </Pressable>
 
-                <Pressable
-                  style={styles.modalAddBtn}
-                  onPress={() => setModalVisible(false)}
-                >
+                <Pressable style={styles.modalAddBtn} onPress={addBudget}>
                   <Text style={styles.modalAddBtnText}>Add</Text>
                 </Pressable>
               </View>
