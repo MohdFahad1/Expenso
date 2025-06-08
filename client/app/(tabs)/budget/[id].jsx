@@ -1,34 +1,31 @@
-import { useLocalSearchParams } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  TextInput,
-  Pressable,
   Alert,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import ScreenWrapper from "../../components/ScreenWrapper";
-import BackButton from "../../components/BackButton";
-import { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { useLocalSearchParams } from "expo-router";
 import { AuthContext } from "../../../context/AuthContext";
+import ExpenseList from "../../components/ExpenseList";
+import BackButton from "../../components/BackButton";
+import ScreenWrapper from "../../components/ScreenWrapper";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import axios from "axios";
-import ExpenseList from "../../components/ExpenseList";
 
 const BudgetDetailsScreen = () => {
   const { id, name } = useLocalSearchParams();
   const { user } = useContext(AuthContext);
+
   const [expenseName, setExpenseName] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [expenses, setExpenses] = useState([]);
-
-  console.log("USERID: ", typeof user?.id);
-  console.log("BUDGETID: ", typeof id);
-
-  console.log("EXPENSES: ", expenses);
 
   const fetchExpenses = async () => {
     try {
@@ -37,11 +34,11 @@ const BudgetDetailsScreen = () => {
       );
       setExpenses(res?.data?.expenses || []);
     } catch (error) {
-      if (error.response && error.response.status === 404) {
+      if (error.response?.status === 404) {
         console.log("No expenses found for this budget.");
         setExpenses([]);
       } else {
-        console.log("Error fetching expenses", error.message);
+        console.log("Error fetching expenses:", error.message);
       }
     }
   };
@@ -51,6 +48,11 @@ const BudgetDetailsScreen = () => {
   }, [id]);
 
   const addExpense = async () => {
+    if (!expenseName || !amount) {
+      Alert.alert("Validation Error", "Please enter all fields.");
+      return;
+    }
+
     try {
       const res = await axios.post(
         "http://192.168.1.19:5001/api/expense/create",
@@ -58,27 +60,18 @@ const BudgetDetailsScreen = () => {
           userId: user?.id,
           budgetId: id,
           name: expenseName,
-          amount,
+          amount: Number(amount),
         }
       );
 
-      console.log("SUCCESS: ", JSON.stringify(res.data, null, 2));
+      console.log("SUCCESS:", res.data);
       Alert.alert("Success", "Expense added successfully!");
 
-      fetchExpenses();
-
-      setExpenses((prev) => [
-        ...prev,
-        {
-          _id: res.data.newExpense._id,
-          name: res.data.newExpense.name,
-          amount: res.data.newExpense.amount,
-        },
-      ]);
+      await fetchExpenses();
       setExpenseName("");
       setAmount("");
     } catch (error) {
-      console.log("Error in creating expense", error.message);
+      console.log("Error in creating expense:", error.message);
       Alert.alert("Error", "Please try again later.");
     }
   };
@@ -89,26 +82,27 @@ const BudgetDetailsScreen = () => {
         <BackButton title={name} />
         <View>
           <Text style={styles.mainTitle}>Add New Expense</Text>
+
           <View>
-            <Text style={styles.inputBudgetName}>Expense Name</Text>
+            <Text style={styles.inputLabel}>Expense Name</Text>
             <TextInput
               placeholder="e.g. Home Decor"
-              placeholderTextColor={"#666666"}
+              placeholderTextColor="#666"
               style={styles.input}
               value={expenseName}
-              onChange={setExpenseName}
+              onChangeText={setExpenseName}
             />
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputBudgetName}>Expense Amount</Text>
+            <Text style={styles.inputLabel}>Expense Amount</Text>
             <TextInput
-              placeholder="e.g. $5000"
-              placeholderTextColor={"#666666"}
+              placeholder="e.g. 5000"
+              placeholderTextColor="#666"
               style={styles.input}
               keyboardType="numeric"
               value={amount}
-              onChange={setAmount}
+              onChangeText={setAmount}
             />
           </View>
 
@@ -118,22 +112,15 @@ const BudgetDetailsScreen = () => {
             </Pressable>
           </View>
         </View>
+
         <View>
           <Text style={styles.expenseTitle}>Latest Expenses</Text>
           {expenses.length === 0 ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <View style={styles.noExpenseContainer}>
               <Text style={styles.noExpense}>No expenses yet</Text>
             </View>
           ) : (
-            <View>
-              <ExpenseList expenses={expenses} />
-            </View>
+            <ExpenseList expenses={expenses} />
           )}
         </View>
       </View>
@@ -142,7 +129,6 @@ const BudgetDetailsScreen = () => {
 };
 
 export default BudgetDetailsScreen;
-
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
@@ -170,7 +156,7 @@ const styles = StyleSheet.create({
   emoji: {
     fontSize: hp(3.5),
   },
-  inputBudgetName: {
+  inputLabel: {
     fontSize: hp(2.6),
     fontWeight: "500",
     marginBottom: 10,

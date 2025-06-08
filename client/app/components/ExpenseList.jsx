@@ -25,6 +25,7 @@ const ExpenseList = ({ expenses }) => (
 
     <FlatList
       data={expenses}
+      showsVerticalScrollIndicator={false}
       renderItem={renderItem}
       keyExtractor={(item) => item._id}
       ListEmptyComponent={
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
     marginTop: hp(2),
     // backgroundColor: "#262626",
     borderRadius: 10,
+    height: hp(38.5),
   },
   row: {
     flexDirection: "row",
