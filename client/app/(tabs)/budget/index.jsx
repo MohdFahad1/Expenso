@@ -7,8 +7,8 @@ import {
   Pressable,
   Modal,
   TextInput,
-  ScrollView,
   Alert,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import ScreenWrapper from "../../components/ScreenWrapper";
@@ -20,6 +20,8 @@ import axios from "axios";
 import { AuthContext } from "../../../context/AuthContext";
 import Feather from "@expo/vector-icons/Feather";
 import { useRouter } from "expo-router";
+import BudgetCard from "../../components/BudgetCard";
+import EmojiPicker from "../../components/EmojiPicker";
 
 const Budget = () => {
   const { user } = useContext(AuthContext);
@@ -28,7 +30,7 @@ const Budget = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [budgetName, setBudgetName] = useState("");
   const [budgetAmount, setBudgetAmount] = useState(0);
-  const [selectedEmoji, setSelectedEmoji] = useState("💰");
+  const [emoji, setEmoji] = useState("💰");
 
   const router = useRouter();
 
@@ -51,7 +53,7 @@ const Budget = () => {
       const res = await axios.post(
         `http://192.168.1.19:5001/api/budget/create`,
         {
-          emoji: selectedEmoji,
+          emoji,
           name: budgetName,
           amount: budgetAmount,
           userId: user?.id,
@@ -65,7 +67,7 @@ const Budget = () => {
       setModalVisible(false);
       setBudgetName("");
       setBudgetAmount(0);
-      setSelectedEmoji("💰");
+      setEmoji("💰");
 
       Alert.alert("Success", "Budget added successfully");
     } catch (error) {
@@ -83,38 +85,7 @@ const Budget = () => {
     }
   }, [user]);
 
-  const renderItem = ({ item }) => (
-    <Pressable
-      style={styles.budgetCard}
-      onPress={() => router.push(`/budget/${item._id}`)}
-    >
-      <View style={styles.budgetDetails}>
-        <View style={{ flexDirection: "row", gap: 10 }}>
-          <View style={styles.emojiBox}>
-            <Text style={styles.budgetEmoji}>{item.emoji}</Text>
-          </View>
-          <View>
-            <Text style={styles.budgetTitle}>{item.name}</Text>
-            <Text style={{ color: "#9CA3AF" }}>3 items</Text>
-          </View>
-        </View>
-        <Text style={styles.budgetAmount}>${item.amount}</Text>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 15,
-        }}
-      >
-        <Text style={{ color: "#6B7280" }}>$1020 Spent</Text>
-        <Text style={{ color: "#6B7280" }}>$2020 Remaining</Text>
-      </View>
-      <View style={styles.line}>
-        <View style={styles.innerLine}></View>
-      </View>
-    </Pressable>
-  );
+  const renderItem = ({ item }) => <BudgetCard budget={item} />;
 
   return (
     <ScreenWrapper bg="#171717">
@@ -160,25 +131,10 @@ const Budget = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <KeyboardAvoidingView>
               <Text style={styles.modalTitle}>Add New Budget</Text>
 
-              <View style={styles.emojiSelectBox}>
-                <TextInput
-                  style={styles.emoji}
-                  value={selectedEmoji}
-                  onChangeText={(text) => {
-                    const match = text.match(/\p{Emoji}/u);
-                    if (match) {
-                      setSelectedEmoji(match[0]);
-                    } else {
-                      setSelectedEmoji("");
-                    }
-                  }}
-                  keyboardType="default"
-                  maxLength={2}
-                />
-              </View>
+              <EmojiPicker emoji={emoji} setEmoji={setEmoji} />
 
               <View>
                 <Text style={styles.inputBudgetName}>Budget Name</Text>
@@ -215,7 +171,7 @@ const Budget = () => {
                   <Text style={styles.modalAddBtnText}>Add</Text>
                 </Pressable>
               </View>
-            </ScrollView>
+            </KeyboardAvoidingView>
           </View>
         </View>
       </Modal>
@@ -260,50 +216,6 @@ const styles = StyleSheet.create({
     fontSize: hp(2),
     marginTop: 20,
     textAlign: "center",
-  },
-  budgetCard: {
-    backgroundColor: "#262626",
-    padding: 16,
-    borderRadius: 10,
-  },
-  budgetDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  budgetTitle: {
-    color: "#e1e1e1",
-    fontSize: hp(2.5),
-    fontWeight: "600",
-    textTransform: "capitalize",
-  },
-  budgetAmount: {
-    color: "#A3E535",
-    fontSize: hp(2.8),
-    fontWeight: "bold",
-  },
-  emojiBox: {
-    backgroundColor: "#3a3a3a",
-    borderRadius: 100,
-    height: hp(6.5),
-    width: wp(14),
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  budgetEmoji: {
-    fontSize: hp(2.8),
-  },
-  line: {
-    width: wp(81.5),
-    height: hp(1),
-    backgroundColor: "#CBD5E1",
-    borderRadius: 50,
-    marginTop: 8,
-  },
-  innerLine: {
-    width: wp(40),
-    height: hp(1),
-    backgroundColor: "#A3E535",
-    borderRadius: 50,
   },
   modalOverlay: {
     flex: 1,
