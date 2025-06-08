@@ -1,15 +1,21 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 
-const BackButton = () => {
+const BackButton = ({ title }) => {
   const router = useRouter();
 
   return (
-    <Pressable style={styles.container} onPress={() => router.back()}>
-      <Ionicons name="chevron-back" size={24} color="#e1e1e1" />
-    </Pressable>
+    <View style={styles.container}>
+      <Pressable style={styles.backBtn} onPress={() => router.back()}>
+        <Ionicons name="chevron-back" size={24} color="#e1e1e1" />
+      </Pressable>
+      {title && <Text style={styles.title}>{title}</Text>}
+    </View>
   );
 };
 
@@ -17,13 +23,24 @@ export default BackButton;
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: hp(2),
+  },
+  backBtn: {
     backgroundColor: "#525252",
     width: 35,
     height: 35,
-    borderCurve: "continuous",
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: hp(2),
+  },
+  title: {
+    fontSize: hp(2.5),
+    fontWeight: "500",
+    color: "#e1e1e1",
+    marginLeft: 10,
+    width: wp(79),
+    textTransform: "capitalize",
   },
 });

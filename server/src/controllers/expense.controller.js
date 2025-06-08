@@ -11,9 +11,7 @@ const createExpense = async (req, res) => {
       });
     }
 
-    if (typeof name === "string") {
-      name = name.trim().toLowerCase();
-    }
+    name = name.trim().toLowerCase();
 
     const existingExpense = await Expense.findOne({ name, budgetId });
 
@@ -36,7 +34,12 @@ const createExpense = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "New Expense Created",
-      newExpense,
+      newExpense: {
+        _id: newExpense._id,
+        name: newExpense.name,
+        amount: newExpense.amount,
+        userId: newExpense.userId,
+      },
     });
   } catch (error) {
     console.error("Error Creating Expense:", error);

@@ -8,10 +8,19 @@ import {
 const BudgetCard = ({ budget }) => {
   const router = useRouter();
 
+  console.log("BUDET DTA:", budget.name);
+
   return (
     <Pressable
       style={styles.budgetCard}
-      onPress={() => router.push(`/budget/${budget._id}`)}
+      onPress={() =>
+        router.push({
+          pathname: `/budget/${budget._id}`,
+          params: {
+            name: budget.name,
+          },
+        })
+      }
     >
       <View style={styles.budgetDetails}>
         <View style={{ flexDirection: "row", gap: 10 }}>
