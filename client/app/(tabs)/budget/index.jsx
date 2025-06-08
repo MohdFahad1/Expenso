@@ -19,7 +19,6 @@ import {
 import axios from "axios";
 import { AuthContext } from "../../../context/AuthContext";
 import Feather from "@expo/vector-icons/Feather";
-import { useRouter } from "expo-router";
 import BudgetCard from "../../components/BudgetCard";
 import EmojiPicker from "../../components/EmojiPicker";
 
@@ -31,8 +30,6 @@ const Budget = () => {
   const [budgetName, setBudgetName] = useState("");
   const [budgetAmount, setBudgetAmount] = useState(0);
   const [emoji, setEmoji] = useState("💰");
-
-  const router = useRouter();
 
   const fetchBudgets = async () => {
     setLoading(true);
@@ -59,8 +56,6 @@ const Budget = () => {
           userId: user?.id,
         }
       );
-
-      setBudgets((prevBudgets) => [...prevBudgets, res.data.newBudget]);
 
       fetchBudgets();
 
