@@ -80,10 +80,19 @@ const Budget = () => {
     }
   }, [user]);
 
+  const totalBudgetAmount = budgets.reduce(
+    (sum, item) => sum + Number(item.amount),
+    0
+  );
+
   const renderItem = ({ item }) => <BudgetCard budget={item} />;
 
   return (
-    <ScreenWrapper bg="#171717">
+    <ScreenWrapper bg="#000000">
+      <View style={styles.totalBudget}>
+        <Text style={styles.totalBudgetAmount}>${totalBudgetAmount}</Text>
+        <Text style={styles.balance}>Total balance</Text>
+      </View>
       <View style={styles.container}>
         <View
           style={{
@@ -97,7 +106,7 @@ const Budget = () => {
             style={styles.addBtnBox}
             onPress={() => setModalVisible(true)}
           >
-            <Feather name="plus" size={24} color="#e1e1e1" />
+            <Feather name="plus" size={22} color="#171717" />
           </Pressable>
         </View>
         {loading ? (
@@ -105,6 +114,7 @@ const Budget = () => {
         ) : (
           <FlatList
             data={budgets}
+            showsVerticalScrollIndicator={false}
             renderItem={renderItem}
             keyExtractor={(item) => item._id}
             contentContainerStyle={
@@ -177,24 +187,50 @@ const Budget = () => {
 export default Budget;
 
 const styles = StyleSheet.create({
+  totalBudget: {
+    height: hp(30),
+    width: wp(100),
+    backgroundColor: "#000000",
+    position: "absolute",
+    top: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  totalBudgetAmount: {
+    zIndex: 10,
+    color: "#e1e1e1",
+    fontSize: hp(8),
+    marginTop: 20,
+  },
+  balance: {
+    color: "#e1e1e1",
+    fontSize: hp(2.3),
+  },
   container: {
-    flex: 1,
-    paddingHorizontal: wp(5),
-    paddingTop: hp(2),
+    height: hp(67),
+    paddingHorizontal: wp(6),
+    paddingTop: hp(3),
+    borderTopLeftRadius: 35,
+    borderTopRightRadius: 35,
+    zIndex: 10,
+    marginTop: hp(25),
+    backgroundColor: "#1f1f1f",
+    overflow: "hidden",
+    position: "relative",
   },
   mainText: {
     color: "#e1e1e1",
-    fontSize: hp(4),
-    fontWeight: "bold",
+    fontSize: hp(3.5),
+    fontWeight: "400",
     marginBottom: hp(2),
   },
   addBtnBox: {
-    backgroundColor: "#3a3a3a",
-    width: wp(13),
+    backgroundColor: "#9BE731",
+    width: wp(8.5),
     height: hp(4),
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: 30,
   },
   list: {
     paddingBottom: hp(2),

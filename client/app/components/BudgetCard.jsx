@@ -35,7 +35,7 @@ const BudgetCard = ({ budget }) => {
         <Text style={styles.budgetAmount}>${budget.amount}</Text>
       </View>
 
-      <View
+      {/* <View
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
@@ -48,7 +48,7 @@ const BudgetCard = ({ budget }) => {
 
       <View style={styles.line}>
         <View style={styles.innerLine}></View>
-      </View>
+      </View> */}
     </Pressable>
   );
 };
