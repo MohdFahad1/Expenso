@@ -4,11 +4,10 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const BudgetCard = ({ budget }) => {
   const router = useRouter();
-
-  console.log("BUDET DTA:", budget.name);
 
   return (
     <Pressable
@@ -29,26 +28,17 @@ const BudgetCard = ({ budget }) => {
           </View>
           <View>
             <Text style={styles.budgetTitle}>{budget.name}</Text>
-            <Text style={{ color: "#9CA3AF" }}>3 items</Text>
+            <Text style={{ color: "#A3E535" }}>${budget.amount}</Text>
           </View>
         </View>
-        <Text style={styles.budgetAmount}>${budget.amount}</Text>
+        <Text
+          style={{
+            marginTop: 5,
+          }}
+        >
+          <Entypo name="chevron-thin-right" size={20} color="#d3d3d3" />
+        </Text>
       </View>
-
-      {/* <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 15,
-        }}
-      >
-        <Text style={{ color: "#6B7280" }}>$1020 Spent</Text>
-        <Text style={{ color: "#6B7280" }}>$2020 Remaining</Text>
-      </View>
-
-      <View style={styles.line}>
-        <View style={styles.innerLine}></View>
-      </View> */}
     </Pressable>
   );
 };
@@ -57,9 +47,9 @@ export default BudgetCard;
 
 const styles = StyleSheet.create({
   budgetCard: {
-    backgroundColor: "#262626",
-    padding: 16,
-    borderRadius: 10,
+    // backgroundColor: "#262626",
+    paddingVertical: 8,
+    // borderRadius: 10,
   },
   budgetDetails: {
     flexDirection: "row",
