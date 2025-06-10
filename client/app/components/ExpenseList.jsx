@@ -5,44 +5,44 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-const renderItem = ({ item }) => (
-  <View style={styles.row}>
-    <Text style={styles.cellName}>{item.name}</Text>
-    <Text style={styles.cellAmount}>${item.amount}</Text>
-    <Pressable style={styles.cellAction}>
-      <MaterialIcons name="delete" size={22} color="#ef4444" />
-    </Pressable>
-  </View>
-);
-
-const ExpenseList = ({ expenses }) => (
-  <View style={styles.container}>
-    <View style={[styles.row, styles.header]}>
-      <Text style={[styles.cellName, styles.headerText]}>Name</Text>
-      <Text style={[styles.cellAmount, styles.headerText]}>Amount</Text>
-      <Text style={[styles.cellAction, styles.headerText]}>Action</Text>
+const ExpenseList = ({ expenses, height }) => {
+  const renderItem = ({ item }) => (
+    <View style={styles.row}>
+      <Text style={styles.cellName}>{item.name}</Text>
+      <Text style={styles.cellAmount}>${item.amount}</Text>
+      <Pressable style={styles.cellAction}>
+        <MaterialIcons name="delete" size={22} color="#ef4444" />
+      </Pressable>
     </View>
+  );
 
-    <FlatList
-      data={expenses}
-      showsVerticalScrollIndicator={false}
-      renderItem={renderItem}
-      keyExtractor={(item) => item._id}
-      ListEmptyComponent={
-        <Text style={styles.emptyText}>No expenses found.</Text>
-      }
-    />
-  </View>
-);
+  return (
+    <View style={[styles.container, { height: height || hp(38.5) }]}>
+      <View style={[styles.row, styles.header]}>
+        <Text style={[styles.cellName, styles.headerText]}>Name</Text>
+        <Text style={[styles.cellAmount, styles.headerText]}>Amount</Text>
+        <Text style={[styles.cellAction, styles.headerText]}>Action</Text>
+      </View>
+
+      <FlatList
+        data={expenses}
+        showsVerticalScrollIndicator={false}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No expenses found.</Text>
+        }
+      />
+    </View>
+  );
+};
 
 export default ExpenseList;
 
 const styles = StyleSheet.create({
   container: {
     marginTop: hp(2),
-    // backgroundColor: "#262626",
     borderRadius: 10,
-    height: hp(38.5),
   },
   row: {
     flexDirection: "row",

@@ -10,7 +10,6 @@ import {
 import axios from "axios";
 import Feather from "@expo/vector-icons/Feather";
 import Entypo from "@expo/vector-icons/Entypo";
-import BudgetCard from "../components/BudgetCard";
 
 const Home = () => {
   const { user, token } = useContext(AuthContext);

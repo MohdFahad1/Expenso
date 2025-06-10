@@ -90,7 +90,7 @@ const Budget = () => {
   return (
     <ScreenWrapper bg="#000000">
       <View style={styles.totalBudget}>
-        <Text style={styles.totalBudgetAmount}>${totalBudgetAmount}</Text>
+        <Text style={styles.totalBudgetAmount}>+ ${totalBudgetAmount}</Text>
         <Text style={styles.balance}>Total balance</Text>
       </View>
       <View style={styles.container}>
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   totalBudgetAmount: {
     zIndex: 10,
-    color: "#e1e1e1",
+    color: "#A3E535",
     fontSize: hp(8),
     marginTop: 20,
   },

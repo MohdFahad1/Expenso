@@ -29,18 +29,21 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="expense"
+        options={{
+          title: "Expense",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5 name="exchange-alt" size={28} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="budget"
         options={{
           title: "Budget",
           tabBarIcon: ({ color }) => (
             <FontAwesome5 size={28} name="credit-card" color={color} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="budget/[id]"
-        options={{
-          href: null,
         }}
       />
       <Tabs.Screen
