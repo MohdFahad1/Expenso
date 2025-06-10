@@ -1,20 +1,34 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-const ExpenseList = ({ expenses, height }) => {
-  const renderItem = ({ item }) => (
-    <View style={styles.row}>
-      <Text style={styles.cellName}>{item.name}</Text>
-      <Text style={styles.cellAmount}>${item.amount}</Text>
-      <Pressable style={styles.cellAction}>
-        <MaterialIcons name="delete" size={22} color="#ef4444" />
-      </Pressable>
-    </View>
-  );
+const ExpenseList = ({ expenses, height, onDeleteExpense }) => {
+  const renderItem = ({ item }) => {
+    console.log("EXPENSE DETAILS: ", item._id);
+
+    return (
+      <View style={styles.row}>
+        <Text style={styles.cellName}>{item.name}</Text>
+        <Text style={styles.cellAmount}>${item.amount}</Text>
+        <Pressable
+          style={styles.cellAction}
+          onPress={() => onDeleteExpense(item._id)}
+        >
+          <MaterialIcons name="delete" size={22} color="#ef4444" />
+        </Pressable>
+      </View>
+    );
+  };
 
   return (
     <View style={[styles.container, { height: height || hp(38.5) }]}>

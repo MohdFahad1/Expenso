@@ -76,6 +76,16 @@ const BudgetDetailsScreen = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    const res = await deleteExpense(id);
+    if (res.success) {
+      Alert.alert("Success", "Expense deleted successfully.");
+      fetchExpenses();
+    } else {
+      Alert.alert("Error", "Failed to delete expense. Please try again.");
+    }
+  };
+
   return (
     <ScreenWrapper bg="#171717">
       <View style={styles.container}>
@@ -120,7 +130,7 @@ const BudgetDetailsScreen = () => {
               <Text style={styles.noExpense}>No expenses yet</Text>
             </View>
           ) : (
-            <ExpenseList expenses={expenses} />
+            <ExpenseList expenses={expenses} onDeleteExpense={handleDelete} />
           )}
         </View>
       </View>
@@ -129,6 +139,7 @@ const BudgetDetailsScreen = () => {
 };
 
 export default BudgetDetailsScreen;
+
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,

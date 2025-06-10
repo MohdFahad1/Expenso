@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useContext, useState } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import ExpenseList from "../components/ExpenseList";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
+import { deleteExpense } from "../helpers/deleteExpense";
 
 const Expense = () => {
   const [expenses, setExpenses] = useState([]);
@@ -37,6 +38,16 @@ const Expense = () => {
     }, [])
   );
 
+  const handleDelete = async (id) => {
+    const res = await deleteExpense(id);
+    if (res.success) {
+      Alert.alert("Success", "Expense deleted successfully.");
+      fetchExpenses();
+    } else {
+      Alert.alert("Error", "Failed to delete expense. Please try again.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.totalExpense}>
@@ -47,7 +58,11 @@ const Expense = () => {
       <View style={styles.tableWrapper}>
         <View style={styles.table}>
           <Text style={styles.heading}>My Expenses</Text>
-          <ExpenseList expenses={expenses} height={hp(58)} />
+          <ExpenseList
+            expenses={expenses}
+            height={hp(58)}
+            onDeleteExpense={handleDelete}
+          />
         </View>
       </View>
     </View>
