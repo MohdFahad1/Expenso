@@ -9,6 +9,14 @@ import Entypo from "@expo/vector-icons/Entypo";
 const BudgetCard = ({ budget }) => {
   const router = useRouter();
 
+  const formattedDate = budget.createdAt
+    ? new Date(budget.createdAt).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : "";
+
   return (
     <Pressable
       style={styles.budgetCard}
@@ -28,16 +36,22 @@ const BudgetCard = ({ budget }) => {
           </View>
           <View>
             <Text style={styles.budgetTitle}>{budget.name}</Text>
-            <Text style={{ color: "#A3E535" }}>${budget.amount}</Text>
+            <Text style={styles.date}>{formattedDate}</Text>
           </View>
         </View>
-        <Text
-          style={{
-            marginTop: 5,
-          }}
-        >
-          <Entypo name="chevron-thin-right" size={20} color="#d3d3d3" />
-        </Text>
+
+        <View style={styles.btn}>
+          <Text style={{ color: "#A3E535", marginTop: 5 }}>
+            ${budget.amount}
+          </Text>
+          <Text
+            style={{
+              marginTop: 5,
+            }}
+          >
+            <Entypo name="chevron-thin-right" size={20} color="#d3d3d3" />
+          </Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -89,5 +103,15 @@ const styles = StyleSheet.create({
     height: hp(1),
     backgroundColor: "#A3E535",
     borderRadius: 50,
+  },
+  btn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+  },
+  date: {
+    color: "#9CA3AF",
+    fontSize: hp(1.6),
   },
 });

@@ -1,9 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import React, { useCallback, useContext, useState } from "react";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import ExpenseList from "../components/ExpenseList";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
