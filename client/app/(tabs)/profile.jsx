@@ -45,8 +45,8 @@ const Profile = () => {
               {firstLetter}
             </Text>
           </View>
-          <Text style={styles.name}>{user?.name || "Syed Noman"}</Text>
-          <Text style={styles.email}>{user?.email || "Syed@gmail.com"}</Text>
+          <Text style={styles.name}>{user?.name}</Text>
+          <Text style={styles.email}>{user?.email}</Text>
         </View>
 
         <View style={styles.optionsContainer}>

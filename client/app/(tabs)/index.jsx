@@ -96,7 +96,7 @@ const Home = () => {
   const renderExpenseItem = ({ item }) => (
     <View style={styles.listItem}>
       <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemBudgetAmount}>$ {item.amount}</Text>
+      <Text style={styles.itemExpenseAmount}>$ {item.amount}</Text>
     </View>
   );
 
@@ -129,7 +129,7 @@ const Home = () => {
         </View>
         <Text style={styles.itemName}>{item.name}</Text>
       </View>
-      <Text style={styles.itemExpenseAmount}>$ {item.amount}</Text>
+      <Text style={styles.itemBudgetAmount}>$ {item.amount}</Text>
     </View>
   );
 
