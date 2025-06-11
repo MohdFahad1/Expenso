@@ -203,92 +203,106 @@ const Home = () => {
           </View>
         </View>
 
-        <View style={styles.listSection}>
+        {topBudgets.length === 0 ? (
           <View
             style={{
-              flexDirection: "row",
-              marginVertical: 8,
               alignItems: "center",
-              justifyContent: "space-between",
+              justifyContent: "center",
+              flex: 1,
+              height: hp(50),
             }}
           >
-            <Text style={styles.sectionTitle}>Top Budgets</Text>
-            <Pressable
-              onPress={() => router.navigate("/budget")}
+            <Text
               style={{
-                backgroundColor: "#262626",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                borderCurve: "continuous",
-                borderRadius: 20,
+                fontSize: hp(3),
+                color: "#e2e2e2",
               }}
             >
-              <Text
+              Add your first budget
+            </Text>
+          </View>
+        ) : (
+          <>
+            <View style={styles.listSection}>
+              <View
                 style={{
-                  color: "#d3d3d3",
+                  flexDirection: "row",
+                  marginVertical: 8,
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
-                See All
-              </Text>
-            </Pressable>
-          </View>
-          {topBudgets.length === 0 ? (
-            <Text style={styles.noDataText}>No budgets found.</Text>
-          ) : (
-            <FlatList
-              data={topBudgets}
-              keyExtractor={(item) => item._id}
-              renderItem={renderBudgetItem}
-              scrollEnabled={false}
-              contentContainerStyle={{ flexGrow: 1 }}
-            />
-          )}
-        </View>
+                <Text style={styles.sectionTitle}>Top Budgets</Text>
+                <Pressable
+                  onPress={() => router.navigate("/budget")}
+                  style={{
+                    backgroundColor: "#262626",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderCurve: "continuous",
+                    borderRadius: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#d3d3d3",
+                    }}
+                  >
+                    See All
+                  </Text>
+                </Pressable>
+              </View>
+              <FlatList
+                data={topBudgets}
+                keyExtractor={(item) => item._id}
+                renderItem={renderBudgetItem}
+                scrollEnabled={false}
+                contentContainerStyle={{ flexGrow: 1 }}
+              />
+            </View>
 
-        <View style={styles.listSection}>
-          <View
-            style={{
-              flexDirection: "row",
-              marginVertical: 8,
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={styles.sectionTitle}>Top Expenses</Text>
-            <Pressable
-              onPress={() => router.navigate("/expense")}
-              style={{
-                backgroundColor: "#262626",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                borderCurve: "continuous",
-                borderRadius: 20,
-              }}
-            >
-              <Text
+            <View style={styles.listSection}>
+              <View
                 style={{
-                  color: "#d3d3d3",
+                  flexDirection: "row",
+                  marginVertical: 8,
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
-                See All
-              </Text>
-            </Pressable>
-          </View>
-          {topExpenses.length === 0 ? (
-            <Text style={styles.noDataText}>No expenses found.</Text>
-          ) : (
-            <FlatList
-              data={topExpenses}
-              keyExtractor={(item) => item._id}
-              renderItem={renderExpenseItem}
-              scrollEnabled={false}
-            />
-          )}
-        </View>
+                <Text style={styles.sectionTitle}>Top Expenses</Text>
+                <Pressable
+                  onPress={() => router.navigate("/expense")}
+                  style={{
+                    backgroundColor: "#262626",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderCurve: "continuous",
+                    borderRadius: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "#d3d3d3",
+                    }}
+                  >
+                    See All
+                  </Text>
+                </Pressable>
+              </View>
+              <FlatList
+                data={topExpenses}
+                keyExtractor={(item) => item._id}
+                renderItem={renderExpenseItem}
+                scrollEnabled={false}
+              />
+            </View>
+          </>
+        )}
       </ScrollView>
     </ScreenWrapper>
   );

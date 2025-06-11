@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useContext, useState } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import ExpenseList from "../components/ExpenseList";
@@ -8,10 +8,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { deleteExpense } from "../helpers/deleteExpense";
 
 const Expense = () => {
-  const [expenses, setExpenses] = useState([]);
   const { user } = useContext(AuthContext);
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchExpenses = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(
         `http://192.168.1.19:5001/api/expense/all?userId=${user?.id}`
@@ -24,6 +26,8 @@ const Expense = () => {
       } else {
         console.log("Error fetching expenses:", error.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,11 +62,15 @@ const Expense = () => {
       <View style={styles.tableWrapper}>
         <View style={styles.table}>
           <Text style={styles.heading}>My Expenses</Text>
-          <ExpenseList
-            expenses={expenses}
-            height={hp(58)}
-            onDeleteExpense={handleDelete}
-          />
+          {loading ? (
+            <ActivityIndicator size="large" color="#A3E535" />
+          ) : (
+            <ExpenseList
+              expenses={expenses}
+              height={hp(58)}
+              onDeleteExpense={handleDelete}
+            />
+          )}
         </View>
       </View>
     </View>
