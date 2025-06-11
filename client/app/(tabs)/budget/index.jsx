@@ -90,7 +90,7 @@ const Budget = () => {
   return (
     <ScreenWrapper bg="#000000">
       <View style={styles.totalBudget}>
-        <Text style={styles.totalBudgetAmount}>+ ${totalBudgetAmount}</Text>
+        <Text style={styles.totalBudgetAmount}>+${totalBudgetAmount}</Text>
         <Text style={styles.balance}>Total balance</Text>
       </View>
       <View style={styles.container}>

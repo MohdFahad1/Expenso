@@ -14,8 +14,6 @@ import {
 
 const ExpenseList = ({ expenses, height, onDeleteExpense }) => {
   const renderItem = ({ item }) => {
-    console.log("EXPENSE DETAILS: ", item._id);
-
     return (
       <View style={styles.row}>
         <Text style={styles.cellName}>{item.name}</Text>
