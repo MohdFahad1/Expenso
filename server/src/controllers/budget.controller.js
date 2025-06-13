@@ -1,4 +1,5 @@
 const Budget = require("../models/budget.model.js");
+const Expense = require("../models/expense.model.js");
 
 const createBudget = async (req, res) => {
   try {
@@ -195,7 +196,10 @@ const deleteBudget = async (req, res) => {
       });
     }
 
+    const deletedExpenses = await Expense.deleteMany({ budgetId });
+
     console.log("Budget deleted successfully:", deletedBudget);
+    console.log("Related expenses deleted:", deletedExpenses.deletedCount);
 
     return res.status(200).json({
       success: true,
