@@ -10,7 +10,7 @@ import {
   Alert,
   KeyboardAvoidingView,
 } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import {
   widthPercentageToDP as wp,
@@ -21,6 +21,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import Feather from "@expo/vector-icons/Feather";
 import BudgetCard from "../../components/BudgetCard";
 import EmojiPicker from "../../components/EmojiPicker";
+import { useFocusEffect } from "expo-router";
 
 const Budget = () => {
   const { user } = useContext(AuthContext);
@@ -74,11 +75,13 @@ const Budget = () => {
     }
   };
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchBudgets();
-    }
-  }, [user]);
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        fetchBudgets();
+      }
+    }, [user?.id])
+  );
 
   const totalBudgetAmount = budgets.reduce(
     (sum, item) => sum + Number(item.amount),

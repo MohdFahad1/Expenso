@@ -12,7 +12,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-const ExpenseList = ({ expenses, height, onDeleteExpense }) => {
+const ExpenseList = ({ expenses, height, onDeleteExpense, scroll }) => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.row}>
@@ -40,6 +40,7 @@ const ExpenseList = ({ expenses, height, onDeleteExpense }) => {
         data={expenses}
         showsVerticalScrollIndicator={false}
         renderItem={renderItem}
+        scrollEnabled={scroll || true}
         keyExtractor={(item) => item._id}
         ListEmptyComponent={
           <Text style={styles.emptyText}>No expenses found.</Text>

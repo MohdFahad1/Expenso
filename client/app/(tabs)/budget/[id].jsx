@@ -1,8 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Alert,
-  FlatList,
+  KeyboardAvoidingView,
+  Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,6 +20,8 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
+import EmojiPicker from "../../components/EmojiPicker";
+import { deleteExpense } from "../../helpers/deleteExpense";
 
 const BudgetDetailsScreen = () => {
   const { id, name } = useLocalSearchParams();
@@ -26,6 +30,11 @@ const BudgetDetailsScreen = () => {
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
   const [expenses, setExpenses] = useState([]);
+
+  const [emoji, setEmoji] = useState(emoji || "💰");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [budgetName, setBudgetName] = useState(name || "");
+  const [budgetAmount, setBudgetAmount] = useState(amount || "");
 
   const fetchExpenses = async () => {
     try {
@@ -45,7 +54,15 @@ const BudgetDetailsScreen = () => {
 
   useEffect(() => {
     fetchExpenses();
+    fetchSingleBudget();
   }, [id]);
+
+  useEffect(() => {
+    if (modalVisible) {
+      setBudgetName(name || "");
+      fetchSingleBudget();
+    }
+  }, [modalVisible]);
 
   const addExpense = async () => {
     if (!expenseName || !amount) {
@@ -64,9 +81,7 @@ const BudgetDetailsScreen = () => {
         }
       );
 
-      console.log("SUCCESS:", res.data);
       Alert.alert("Success", "Expense added successfully!");
-
       await fetchExpenses();
       setExpenseName("");
       setAmount("");
@@ -86,10 +101,122 @@ const BudgetDetailsScreen = () => {
     }
   };
 
+  const fetchSingleBudget = async () => {
+    try {
+      const res = await axios.get(
+        `http://192.168.1.19:5001/api/budget?budgetId=${id}`
+      );
+
+      if (res.data.success) {
+        const budget = res.data.budgetData;
+        setBudgetName(budget.name);
+        setBudgetAmount(budget.amount.toString());
+        if (budget.emoji) {
+          setEmoji(budget.emoji);
+        }
+      }
+    } catch (error) {
+      console.log("Failed to fetch budget details:", error.message);
+      Alert.alert("Error", "Failed to fetch budget details");
+    }
+  };
+
+  const updateBudget = async () => {
+    if (!budgetName || !budgetAmount) {
+      Alert.alert("Validation Error", "Please enter all fields.");
+      return;
+    }
+
+    try {
+      const res = await axios.put(
+        `http://192.168.1.19:5001/api/budget/update`,
+        {
+          name: budgetName,
+          amount: Number(budgetAmount),
+          emoji,
+          userId: user?.id,
+          budgetId: id,
+        }
+      );
+
+      Alert.alert("Success", "Budget updated successfully!");
+      fetchSingleBudget();
+      setModalVisible(false);
+    } catch (error) {
+      console.log("Error updating budget:", error.message);
+      Alert.alert("Error", "Failed to update budget. Please try again.");
+    }
+  };
+
   return (
     <ScreenWrapper bg="#171717">
-      <View style={styles.container}>
-        <BackButton title={name} />
+      <View
+        style={{
+          paddingHorizontal: 15,
+        }}
+      >
+        <BackButton title={budgetName} />
+      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View>
+          <View
+            style={{
+              backgroundColor: "#262626",
+              padding: 12,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: "#444",
+              marginBottom: 20,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 19,
+                  fontWeight: "bold",
+                  color: "#fff",
+                  textTransform: "capitalize",
+                  width: "65%",
+                }}
+              >
+                Budget Name: {budgetName}
+              </Text>
+
+              <Pressable
+                style={{
+                  paddingVertical: 6,
+                  paddingHorizontal: 12,
+                  backgroundColor: "#4B5563",
+                  borderRadius: 6,
+                }}
+                onPress={() => setModalVisible(true)}
+              >
+                <Text style={{ color: "#fff", fontWeight: "600" }}>Edit</Text>
+              </Pressable>
+            </View>
+            <Text style={{ color: "#ccc", fontSize: 16 }}>
+              Amount: ${" "}
+              <Text style={{ color: "#fff" }}>
+                {Number(budgetAmount).toLocaleString()}
+              </Text>
+            </Text>
+            {emoji ? (
+              <Text style={{ fontSize: 28, marginTop: 6 }}>{emoji}</Text>
+            ) : null}
+          </View>
+        </View>
+
         <View>
           <Text style={styles.mainTitle}>Add New Expense</Text>
 
@@ -123,6 +250,7 @@ const BudgetDetailsScreen = () => {
           </View>
         </View>
 
+        {/* Expenses List */}
         <View>
           <Text style={styles.expenseTitle}>Latest Expenses</Text>
           {expenses.length === 0 ? (
@@ -130,10 +258,68 @@ const BudgetDetailsScreen = () => {
               <Text style={styles.noExpense}>No expenses yet</Text>
             </View>
           ) : (
-            <ExpenseList expenses={expenses} onDeleteExpense={handleDelete} />
+            <ExpenseList
+              expenses={expenses}
+              onDeleteExpense={handleDelete}
+              scroll={false}
+            />
           )}
         </View>
-      </View>
+
+        {/* Modal */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <KeyboardAvoidingView>
+                <Text style={styles.modalTitle}>Update Budget</Text>
+
+                <EmojiPicker emoji={emoji} setEmoji={setEmoji} />
+
+                <View>
+                  <Text style={styles.inputBudgetName}>Budget Name</Text>
+                  <TextInput
+                    placeholder="e.g. Home Decor"
+                    placeholderTextColor="#666666"
+                    style={styles.input}
+                    value={budgetName}
+                    onChangeText={setBudgetName}
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputBudgetName}>Budget Amount</Text>
+                  <TextInput
+                    placeholder="e.g. $5000"
+                    placeholderTextColor="#666666"
+                    style={styles.input}
+                    keyboardType="numeric"
+                    value={budgetAmount}
+                    onChangeText={setBudgetAmount}
+                  />
+                </View>
+
+                <View style={styles.btn}>
+                  <Pressable
+                    style={styles.modalCloseBtn}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.modalCloseBtnText}>Cancel</Text>
+                  </Pressable>
+
+                  <Pressable style={styles.modalAddBtn} onPress={updateBudget}>
+                    <Text style={styles.modalAddBtnText}>Update</Text>
+                  </Pressable>
+                </View>
+              </KeyboardAvoidingView>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
     </ScreenWrapper>
   );
 };
@@ -144,6 +330,9 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
     backgroundColor: "#171717",
+  },
+  scrollContent: {
+    paddingHorizontal: 15,
   },
   title: {
     color: "#fff",
@@ -185,6 +374,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 18,
   },
+
   btn: {
     flexDirection: "row",
     marginTop: 20,
@@ -216,5 +406,97 @@ const styles = StyleSheet.create({
     fontSize: hp(3),
     fontWeight: "600",
     color: "#e1e1e1",
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContainer: {
+    backgroundColor: "#262626",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: hp(85),
+  },
+  modalTitle: {
+    fontSize: hp(2.5),
+    color: "#e1e1e1",
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  modalCloseBtn: {
+    marginTop: 20,
+    backgroundColor: "#3a3a3a",
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  emojiSelectBox: {
+    backgroundColor: "#3a3a3a",
+    borderRadius: 10,
+    height: hp(7),
+    width: wp(14.5),
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  emoji: {
+    fontSize: hp(3.5),
+  },
+  inputBudgetName: {
+    fontSize: hp(2.6),
+    fontWeight: "500",
+    marginBottom: 10,
+    color: "#e3e3e3",
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#666666",
+    color: "#e1e1e1",
+    borderRadius: 7,
+    paddingHorizontal: 10,
+  },
+
+  inputContainer: {
+    marginTop: 18,
+  },
+  // btn: {
+  //   flexDirection: "row",
+  //   justifyContent: "flex-end",
+  //   width: wp(88),
+  //   marginTop: 20,
+  // },
+
+  modalCloseBtn: {
+    backgroundColor: "#3a3a3a",
+    paddingVertical: hp(2),
+    borderRadius: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+
+  modalCloseBtnText: {
+    color: "#e1e1e1",
+    fontSize: hp(2.2),
+    fontWeight: "500",
+  },
+
+  modalAddBtn: {
+    fontSize: hp(2.2),
+    backgroundColor: "#A3E535",
+    paddingVertical: hp(2),
+    borderRadius: 10,
+    marginLeft: 10,
+    flex: 1,
+    alignItems: "center",
+  },
+  modalAddBtnText: {
+    color: "#313131",
+    borderRadius: 10,
+    fontSize: hp(2.2),
+    fontWeight: "500",
   },
 });
