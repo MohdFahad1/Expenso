@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import axios from "axios";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { AuthContext } from "../../../context/AuthContext";
 import ExpenseList from "../../components/ExpenseList";
 import BackButton from "../../components/BackButton";
@@ -26,6 +26,7 @@ import { deleteExpense } from "../../helpers/deleteExpense";
 const BudgetDetailsScreen = () => {
   const { id, name } = useLocalSearchParams();
   const { user } = useContext(AuthContext);
+  const router = useRouter();
 
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
@@ -148,6 +149,23 @@ const BudgetDetailsScreen = () => {
     }
   };
 
+  const handleDeleteBudget = async () => {
+    try {
+      const res = await axios.delete(
+        `http://192.168.1.19:5001/api/budget?budgetId=${id}`
+      );
+      if (res.data.success) {
+        Alert.alert("Success", "Budget deleted successfully!");
+        router.back();
+      } else {
+        Alert.alert("Error", "Failed to delete budget. Please try again.");
+      }
+    } catch (error) {
+      console.log("Error deleting budget:", error.message);
+      Alert.alert("Error", "Something went wrong.");
+    }
+  };
+
   return (
     <ScreenWrapper bg="#171717">
       <View
@@ -193,17 +211,34 @@ const BudgetDetailsScreen = () => {
                 Budget Name: {budgetName}
               </Text>
 
-              <Pressable
-                style={{
-                  paddingVertical: 6,
-                  paddingHorizontal: 12,
-                  backgroundColor: "#4B5563",
-                  borderRadius: 6,
-                }}
-                onPress={() => setModalVisible(true)}
-              >
-                <Text style={{ color: "#fff", fontWeight: "600" }}>Edit</Text>
-              </Pressable>
+              <View style={{ flexDirection: "column" }}>
+                <Pressable
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    backgroundColor: "#4B5563",
+                    borderRadius: 6,
+                    marginBottom: 8,
+                  }}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <Text style={{ color: "#fff", fontWeight: "600" }}>Edit</Text>
+                </Pressable>
+
+                <Pressable
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    backgroundColor: "#ef4444", // red for delete
+                    borderRadius: 6,
+                  }}
+                  onPress={handleDeleteBudget}
+                >
+                  <Text style={{ color: "#fff", fontWeight: "600" }}>
+                    Delete
+                  </Text>
+                </Pressable>
+              </View>
             </View>
             <Text style={{ color: "#ccc", fontSize: 16 }}>
               Amount: ${" "}
